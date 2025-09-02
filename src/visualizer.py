@@ -37,13 +37,14 @@ class Visualizer():
                          [-l, -w],
                          [-l,  w]])
     
-    def import_map(self, 
+    def import_track(self, 
                    TRACK_WIDTH,
                    x_original, 
                    y_original, 
                    x_rate, 
                    y_rate,
-                   obstacles) -> None:
+                   obstacles,
+                   flag_obs) -> None:
         """Import the map information, including track path
         and obstacles.
         """
@@ -53,54 +54,42 @@ class Visualizer():
         self.x_rate      = x_rate
         self.y_rate      = y_rate
         self.obstacles   = obstacles
+        self.flag_obs    = flag_obs
     
-    # def import_local_toc_solution(self,
-    #                               x, 
-    #                               y, 
-    #                               yaw,
-    #                               vx, 
-    #                               vy, 
-    #                               dyaw, 
-    #                               theta, 
-    #                               torque, 
-    #                               steer, 
-    #                               Ts,
-    #                               dtheta, 
-    #                               dtorque, 
-    #                               dsteer, 
-    #                               dTs) -> None:
-    #     """Import the localized toc solutions.
-    #     """
-    #     self.local_idx_list = idx_list
-    #     self.local_x = x
-    #     self.local_y = y
-    #     self.local_yaw = yaw
-    #     self.local_vx = vx
-    #     self.local_vy = vy
-    #     self.local_dyaw = dyaw
-    #     self.local_theta = theta
-    #     self.local_torque = torque
-    #     self.local_steer = steer
-    #     self.local_Ts = Ts
-    #     self.local_dtheta = dtheta
-    #     self.local_dtorque = dtorque
-    #     self.local_dsteer = dsteer
-    #     self.local_dTs = dTs
+    def import_local_toc(self,
+                        x, 
+                        y, 
+                        vx, 
+                        vy,
+                        yaw, 
+                        dyaw,  
+                        torque, 
+                        steer) -> None:
+        """Import the localized toc solutions.
+        """
+        self.local_x = x
+        self.local_y = y
+        self.local_yaw = yaw
+        self.local_vx = vx
+        self.local_vy = vy
+        self.local_dyaw = dyaw
+        self.local_torque = torque
+        self.local_steer = steer
 
-    def import_flatten_map(self, flatten_map):
+    def import_flatten_track(self, flatten_map):
         """Import the flatten map
         """
         self.flatten_map = flatten_map
 
-    def import_toc_solution(self, 
-                            x, 
-                            y, 
-                            yaw,
-                            dyaw,
-                            vx, 
-                            vy, 
-                            torque, 
-                            steer):
+    def import_toc(self, 
+                    x, 
+                    y, 
+                    vx,
+                    vy,
+                    yaw,
+                    dyaw, 
+                    torque, 
+                    steer):
         """Import the toc solutions.
         """
         self.x = x
@@ -156,6 +145,8 @@ class Visualizer():
         self.fig_xy_plane, self.ax = plt.subplots(1, 1, figsize=(8, 8))
         set_axes_format(self.ax, r'x', r'y')
         set_axes_equal_2d(self.ax)
+        self.ax.set_xlim(-2, 2)
+        self.ax.set_ylim(-2, 2)
 
     @staticmethod
     def plot_center_line(ax: Axes, x, y):
@@ -195,7 +186,8 @@ class Visualizer():
                  ax: Axes, 
                  x: np.ndarray, 
                  y: np.ndarray, 
-                 yaw: np.ndarray) -> None:
+                 yaw: np.ndarray,
+                 is_heading: bool=False) -> None:
         """Plot the car along the trajectory.
         """
         for _x, _y, _yaw in zip(x, y, yaw):
@@ -204,7 +196,7 @@ class Visualizer():
             arrow_length = self.car_dim + 0.01  
             arrow_x = _x + arrow_length * np.cos(_yaw)
             arrow_y = _y + arrow_length * np.sin(_yaw)
-            self._plot_car(ax, _x, _y, corners, arrow_x, arrow_y)
+            self._plot_car(ax, _x, _y, corners, arrow_x, arrow_y, is_heading)
 
     def plot_xy_plane(self,
                       is_track: bool=True,
@@ -228,4 +220,55 @@ class Visualizer():
             self.plot_center_line(self.ax, self.x[::dline], self.y[::dline])
         if is_car:
             self.plot_car(self.ax, self.x[::dcat], self.y[::dcat], self.yaw[::dcat], is_heading)
+        plt.show()
+    
+    def init_flatten_plot(self):
+        """Initalize the plot for flatten map.
+        """
+        self.fig_flatten, self.ax_flatten = plt.subplots(1, 1, figsize=(8, 6))
+        set_axes_format(self.ax_flatten, r'Path Index', r'Y Axis')
+        self.ax_flatten.set_xlim(0, self.flatten_map.shape[1])
+        self.ax_flatten.set_ylim(-0.25, 0.25)
+
+    @staticmethod
+    def plot_flatten_obstacles(ax: Axes, 
+                               flatten_map: np.ndarray,
+                               upper: float,
+                               lower: float) -> None:
+        """Plot the obstacles in the flatten map.
+        """
+        ax.imshow(flatten_map, cmap='Greys', aspect='auto', 
+                  extent=(0, flatten_map.shape[1], lower, upper))
+
+    @staticmethod
+    def plot_flatten_traj(ax: Axes,
+                          y: np.ndarray) -> None:
+        """Plot the trajectory in the flatten map.
+        """
+        ax.plot(y, linewidth=1.0, color='black', label=r'TOC')
+    @staticmethod
+    def plot_flatten_bounds(ax: Axes,
+                            upper: float,
+                            lower: float) -> None:
+        """Plot the track bounds in the flatten map.
+        """
+        ax.axhline(y=upper, color='black', linestyle='-', linewidth=1.0)
+        ax.axhline(y=lower, color='black', linestyle='-', linewidth=1.0)
+
+    def plot_flatten(self,
+                     is_obs: bool=True,
+                     is_traj: bool=True,
+                     is_bounds: bool=True) -> None:
+        self.init_flatten_plot()
+        if is_obs:
+            self.plot_flatten_obstacles(self.ax_flatten, self.flatten_map,
+                                        self.TRACK_WIDTH/2.0, 
+                                        -self.TRACK_WIDTH/2.0)
+        if is_traj:
+            self.plot_flatten_traj(self.ax_flatten, 
+                                   self.local_y)
+        if is_bounds:
+            self.plot_flatten_bounds(self.ax_flatten,
+                                     self.TRACK_WIDTH/2.0,
+                                     -self.TRACK_WIDTH/2.0)
         plt.show()
