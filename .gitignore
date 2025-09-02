@@ -1,0 +1,5 @@
+# ignore the large files
+/data
+
+# ignore the __pycache__ folders
+**/__pycache__
