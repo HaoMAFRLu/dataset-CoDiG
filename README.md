@@ -1,5 +1,6 @@
 # Overview and purpose
 $\mathbf{Dataset name:}$ CoDiG-dataset
+
 $\mathbf{Primary goal:}$ Train the diffusion model proposed in [Hao et al., 2025](https://arxiv.org/abs/2505.13131) to achieve real-time obstacle avoidance for autonomous racing.
 
 What this dataset is
