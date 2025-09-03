@@ -13,7 +13,28 @@ Intended uses
 - Data-driven planning research: ablations on obstacle density, starting states, and timing constraints.
   
 # Getting the data
+Because the dataset is large, we provide a single ZIP via an external host.
+After downloading, extract it to:
+~~~
+CoDiG-dataset/
+└─ data/
+    <extracted files here>
+└─ src/
+└─ scripts/
+~~~
 
+Direct download
+- Latest release (ZIP): https://huggingface.co/datasets/hma2/CoDiG-dataset/resolve/main/codig-dataset_v0.1.0.zip
+- Version: v0.1.0
+- Estimated size: 19.5G
+
+$\mathbf{macOS / Linux}$
+~~~
+wget -c "https://huggingface.co/datasets/hma2/CoDiG-dataset/resolve/main/codig-dataset_v0.1.0.zip" -O codig-dataset_v0.1.0.zip
+unzip -q codig-dataset_v0.1.0.zip -d CoDiG-dataset/data/
+mv CoDiG-dataset/data/codig-dataset_v0.1.0/TOC CoDiG-dataset/data/
+rmdir CoDiG-dataset/data/codig-dataset_v0.1.0 
+~~~
 
 # File structure and contents
 
