@@ -21,14 +21,14 @@ def main(file):
                           global_states[5, :],  # dyaw of the solution
                           global_states[6, :],  # torque of the solution
                           global_states[7, :])  # steer of the solution
-    visualizer.import_local_toc(local_states[0, :],  # x of the solution
-                                local_states[1, :],  # y of the solution 
-                                local_states[2, :],  # vx of the solution
-                                local_states[3, :],  # vy of the solution
-                                local_states[4, :],  # yaw of the solution
-                                local_states[5, :],  # dyaw of the solution
-                                local_states[6, :],  # torque of the solution
-                                local_states[7, :])  # steer of the solution
+    visualizer.import_local_toc(local_states[0, :],  # local x of the solution
+                                local_states[1, :],  # local y of the solution 
+                                local_states[2, :],  # local vx of the solution
+                                local_states[3, :],  # local vy of the solution
+                                local_states[4, :],  # local yaw of the solution
+                                local_states[5, :],  # local dyaw of the solution
+                                local_states[6, :],  # local torque of the solution
+                                local_states[7, :])  # local steer of the solution
     visualizer.plot_xy_plane(dcat=50)
     visualizer.plot_flatten()
     # print the path of roots
