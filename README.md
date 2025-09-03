@@ -129,10 +129,29 @@ Axis semantics
 ## local_states
 Local-frame state sequence (matching the above ordering in the local Frenet frame). 
 
-
-
 # Quick start
 
-# Visualization
+## Load the data
+Use the provided loader script to read a single scenario file from `TOC/` and return the core objects.
+~~~
+scripts/load_toc.py
+~~~
+
+## Visualize the data
+The visualization script plots the solution both in the global $x$-$y$ plane and in the local Frenet frame.
+~~~
+scripts/visualize_toc.py
+~~~
 
 # Citation
+~~~
+@misc{ma2025constraintawarediffusionguidancerobotics,
+      title = {{C}onstraint-{A}ware {D}iffusion {G}uidance for {R}obotics: {R}eal-{T}ime {O}bstacle {A}voidance for {A}utonomous {R}acing}, 
+      author = {Hao Ma and Sabrina Bodmer and Andrea Carron and Melanie Zeilinger and Michael Muehlebach},
+      year = {2025},
+      eprint = {2505.13131},
+      archivePrefix = {arXiv},
+      primaryClass = {cs.RO},
+      url = {https://arxiv.org/abs/2505.13131}, 
+}
+~~~
